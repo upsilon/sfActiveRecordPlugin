@@ -19,9 +19,9 @@ class sfActiveRecordPager extends sfPager
   protected
     $findParams = array();
 
-  public function setFindParams(/* ... */)
+  public function setFindParams(array $params)
   {
-    $this->findParams = func_get_args();
+    $this->findParams = $params;
   }
 
   public function getFindParams()
@@ -33,7 +33,7 @@ class sfActiveRecordPager extends sfPager
   {
     $this->resetIterator();
 
-    $this->setNbResults(call_user_func_array(
+    $this->setNbResults(call_user_func(
       array($this->getClass(), 'count'),
       $this->getFindParams()
     ));
@@ -41,15 +41,16 @@ class sfActiveRecordPager extends sfPager
 
   public function getResults()
   {
-    return call_user_func_array(
+    return call_user_func(
       array($this->getClass(), 'find'),
-      array_merge($this->getFindParams(), array('all', 'offset' => ($this->getPage() - 1) * $this->getMaxPerPage(), 'limit' => $this->getMaxPerPage()))
+      'all',
+      array_merge($this->getFindParams(), array('offset' => ($this->getPage() - 1) * $this->getMaxPerPage(), 'limit' => $this->getMaxPerPage()))
     );
   }
 
   protected function retrieveObject($offset)
   {
-    return call_user_func_array(
+    return call_user_func(
       array($this->getClass(), 'find'),
       array_merge($this->getFindParams(), array('offset' => $offset - 1, 'limit' => 1))
     );
